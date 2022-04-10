@@ -1,6 +1,10 @@
+from faulthandler import disable
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.dialog import MDDialog
+
+#Author: @GizaJ0811
 
 KV = """
 <ScoreInput@MDTextField>
@@ -29,20 +33,29 @@ KV = """
                 size_hint: .9, .9
                 pos_hint: {'center_x': 0.5,'center_y': 0.5}
                 ScoreInput:
+                    id: sc1
                     hint_text: 'Score'
                 ScoreInput:
+                    id: sc2
                     hint_text: 'Score2'
                 MDFillRoundFlatButton: 
                     id: btn
                     pos_hint: {'center_x': .5,'center_y': .5}
                     text: "Submit"
-                    color: 'blue'
+                    on_release: root.submit_btn()
         
 """
 class Main(MDScreen):
     def __init__(self) -> None:
         super().__init__()
-        
+
+    def submit_btn(self):
+        """Button function"""
+        if self.ids.sc1.text == '' or self.ids.sc2.text == '':
+            self.dialog = MDDialog(title=f'Belum terisi!')
+            self.dialog.open()
+        else:
+            print('terisi')
 class MyApp(MDApp):
     def build(self):
         self.title = "Scoring App"
