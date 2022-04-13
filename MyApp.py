@@ -1,8 +1,12 @@
-from faulthandler import disable
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.dialog import MDDialog
+import sqlite3 as sql3
+
+connect_db = sql3.connect('local_db.db')
+cursor = connect_db.cursor()
+data = cursor.fetchall()
 
 #Author: @GizaJ0811
 
