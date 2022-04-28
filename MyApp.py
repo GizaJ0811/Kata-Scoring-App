@@ -1,21 +1,23 @@
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.dialog import MDDialog
+from kivymd.toast import toast
 import sqlite3 as sql3
+from kivymd.uix.menu import MDDropdownMenu
+
+#=======================================================================
 
 connect_db = sql3.connect('local_db.db')
 cursor = connect_db.cursor()
 data = cursor.fetchall()
 
 #Author: @GizaJ0811
-
+#=======================================================================
 KV = """
-<ScoreInput@MDTextField>
-    mode: "fill"
-    icon_right: 'scoreboard'
+<ScoreInput@MDDropDownItem>
     size_hint_x: .6
     pos_hint: {'center_x': .5}
+    #on_release: root.scoredropdown()
 
 <Main>
     Screen:
@@ -26,6 +28,7 @@ KV = """
             MDLabel:
                 text: "Score"
                 halign: 'center'
+                pos_hint: {'top': 1}
                 font_size: 25
                 bold: True
                 size_hint_y: None
@@ -36,30 +39,47 @@ KV = """
                 orientation: 'vertical'
                 size_hint: .9, .9
                 pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                ScoreInput:
-                    id: sc1
-                    hint_text: 'Score'
-                ScoreInput:
-                    id: sc2
-                    hint_text: 'Score2'
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        ScoreInput:
+                            id: scr
+                            on_release: root.scoredropdown(self)
+                            font_size: 16
+                        MDIconButton:
+                            icon: 'scoreboard'
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        ScoreInput:
+                        MDIconButton:
+                            icon: 'scoreboard'
                 MDFillRoundFlatButton: 
                     id: btn
                     pos_hint: {'center_x': .5,'center_y': .5}
                     text: "Submit"
-                    on_release: root.submit_btn()
+                    on_press: root.submit_btn()
         
 """
+#=======================================================================
 class Main(MDScreen):
-    def __init__(self) -> None:
-        super().__init__()
-
+    def scoredropdown(self, instance):
+        self.score_menu_list = [{
+            "viewclass": "OneLineListItem",
+            "text": str(i),
+            "on_release": lambda _=str(i): self.set_score(_)
+        } for i in range(5,11)]
+        self.menu = MDDropdownMenu(
+            items=self.score_menu_list,
+            width_mult = 4,
+            caller=instance
+        ).open()
     def submit_btn(self):
         """Button function"""
-        if self.ids.sc1.text == '' or self.ids.sc2.text == '':
-            self.dialog = MDDialog(title=f'Belum terisi!')
-            self.dialog.open()
-        else:
-            print('terisi')
+    def set_score(self,score):
+        self.ids.scr.set_item
+        print(self.ids.scr.current_item)
+        
 class MyApp(MDApp):
     def build(self):
         self.title = "Scoring App"
